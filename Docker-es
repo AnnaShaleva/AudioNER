@@ -1,0 +1,47 @@
+FROM openjdk:9-jre-slim
+LABEL maintainer "oj <noone@the.wall>"
+ENV ES_VERSION=5.6.3 \
+    KIBANA_VERSION=5.6.3 \
+    ES_JAVA_OPTS="-Xms4g -Xmx4g" \
+    ES_JVM_OPTIONS="-Dlog4j2.disable.jmx=true" \
+    _JAVA_OPTIONS=-Xmx6384m
+
+RUN apt-get update \
+ && apt-get install -y apt-transport-https unzip elasticsearch ca-certificates-java wget
+
+RUN  adduser --disabled-password --gecos '' elastic
+RUN  mkdir /home/elastic/data
+RUN  chown -R elastic:elastic /home/elastic/data
+
+#USER elastic
+WORKDIR /home/elastic
+
+RUN wget -q -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz \
+ |  tar -zx \
+ && mv elasticsearch-${ES_VERSION} elasticsearch \
+ && wget -q -O - https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}-linux-x86_64.tar.gz \
+ |  tar -zx \
+ && mv kibana-${KIBANA_VERSION}-linux-x86_64 kibana
+
+RUN elasticsearch/bin/elasticsearch-plugin install -bs analysis-icu
+RUN elasticsearch/bin/elasticsearch-plugin install -bs analysis-phonetic
+RUN elasticsearch/bin/elasticsearch-plugin install -bs http://dl.bintray.com/content/imotov/elasticsearch-plugins/org/elasticsearch/elasticsearch-analysis-morphology/${ES_VERSION}/elasticsearch-analysis-morphology-${ES_VERSION}.zip
+RUN elasticsearch/bin/elasticsearch-plugin install -bs https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-${ES_VERSION}.zip
+RUN elasticsearch/bin/elasticsearch-plugin install -bs https://github.com/NLPchina/elasticsearch-sql/releases/download/${ES_VERSION}.0/elasticsearch-sql-${ES_VERSION}.0.zip
+RUN kibana/bin/kibana-plugin install https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-${KIBANA_VERSION}.zip
+#RUN kibana/bin/kibana-plugin install https://github.com/dlumbrer/kbn_network/releases/download/5.5.X-1/network_vis.zip
+RUN echo "console.enabled=false" >> kibana/config/kibana.yml
+RUN echo "\nconsole.enabled=false\nelasticsearch.pingTimeout=110000\nelasticsearch.requestTimeout=999999\n" >> kibana/config/kibana.yml
+
+#VOLUME  ["/home/elastic/data"]
+CMD  /bin/sh -c "chown -R elastic:elastic /home/elastic" ;\
+     su elastic -c '/bin/sh -c "ls /home/elastic/data"' ;\
+     su elastic -c '/bin/sh -c "elasticsearch/bin/elasticsearch -E path.logs=/home/elastic/data -E http.host=0.0.0.0 -E xpack.security.enabled=false -E xpack.monitoring.enabled=false -E path.data=/home/elastic/data/ --quiet"' & \
+     su elastic -c '/bin/sh -c "kibana/bin/kibana --host 0.0.0.0 -Q --console.enabled=false"'
+
+#/bin/sh -c "ls /home/elastic/data" \
+#    & /bin/sh -c "echo 'hello' >> /home/elastic/data/test "
+# & elasticsearch/bin/elasticsearch -E http.host=0.0.0.0 -E xpack.security.enabled=false -E path.data=/home/ooiakushkin/data -E path.logs=/home/ooiakushkin/data --quiet \
+# & kibana/bin/kibana --host 0.0.0.0 -Q --console.enabled=false
+
+EXPOSE 9200 5601
