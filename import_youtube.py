@@ -31,6 +31,7 @@ def download_and_preprocess_data(urls_source_file, out_path):
                     p = subprocess.Popen(["youtube-dl", 
                         "-o", filename,
                         "--write-auto-sub",
+                        "--sub-format", "srt",
                         "--sub-lang", "ru",
                         "--skip-download",
                         item['pafy'].videoid],
@@ -44,13 +45,13 @@ def download_and_preprocess_data(urls_source_file, out_path):
                     print("Subs were downloaded")
 
                     # downloading audio
-                    audio = item['pafy'].getbestaudio()
+                    audio = item['pafy'].getbestaudio("m4a")
                     filename = os.path.join(audio_out_path, item['pafy'].videoid + "." + audio.extension)
                     result = audio.download(filename)
                     print(result + " was downloaded")         
 
             except:
-                pass
+                raise
 
 if __name__=="__main__":
     source_file = sys.argv[1]
