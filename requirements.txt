@@ -1,2 +1,4 @@
 pafy==0.5.4
 youtube-dl==2019.4.7
+webvtt-py==0.4.2
+elasticsearchi==6.3.1
