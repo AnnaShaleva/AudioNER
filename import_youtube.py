@@ -30,10 +30,10 @@ def download_and_preprocess_data(urls_source_file, out_path):
                     filename = os.path.join(subs_out_path, "%(id)s.%(ext)s")
                     p = subprocess.Popen(["youtube-dl", 
                         "-o", filename,
+                        "-v", "--skip-download",
                         "--write-auto-sub",
-                        "--sub-format", "srt",
+                        "--sub-format", "vtt",
                         "--sub-lang", "ru",
-                        "--skip-download",
                         item['pafy'].videoid],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
