@@ -1,12 +1,14 @@
 import webvtt
 import time
 import datetime
+import sys
+import re
 import os
 from elasticsearch import Elasticsearch
 
 import constants as const
 
-def parse_subs(source_path):
+def parse_subs_into_line_tockens_list(source_path):
     result = []
     for caption in webvtt.read(source_path):
         start = time.mktime(datetime.datetime.strptime(caption.start, "%H:%M:%S.%f").timetuple())
@@ -20,12 +22,35 @@ def parse_subs(source_path):
             result.append(line)
     return result
 
+def parse_subs_into_word_tockens_list(source_path):
+    result = []
+    for caption in webvtt.read(source_path):
+        line = caption.raw_text.split('\n')[1]
+        line = re.sub('[<][\/]?[c][^<]*[>]', "", line)
+        line = line.replace(" ", "").lower()
+        if line:
+            line = "<" + caption.start + ">" + line + "<" + caption.end + ">"
+            tockens = list(filter(None, re.split('[<>]', line)))
+            count = 0
+            while count < len(tockens) - 2:
+                start = tockens[count]
+                text = tockens[count + 1]
+                end = tockens[count + 2]
+                toAppend = {
+                        'start': start,
+                        'end': end,
+                        'text': text
+                        }
+                result.append(toAppend)
+                count += 2
+    return result
+
 def index_subs_dataset(dataset_path):
     es = Elasticsearch()
     for subs_file in os.listdir(dataset_path):
         num = 1
-        for line in parse_subs(os.path.join(dataset_path, subs_file)):
-            es.index(index="subs_index", doc_type=subs_file, id=num, body=line)
+        for element in parse_subs_into_word_tockens_list(os.path.join(dataset_path, subs_file)):
+            es.index(index="subs_index", doc_type=subs_file, id=num, body=element)
             num += 1
 
 if __name__=="__main__":
