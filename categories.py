@@ -6,9 +6,21 @@ import pandas as pd
 import constants as const
 
 def fill_number_category(out_path):
+    numbers = [
+            "ноль",
+            "один",
+            "два",
+            "три",
+            "четыре",
+            "пять",
+            "шесть",
+            "семь",
+            "восемь",
+            "девять"
+            ]
     f = open(out_path, "w")
-    for i in range(10):
-        f.write("%d\r\n" % i)
+    for i in numbers:
+        f.write(i + "\r\n")
     f.close()
 
 def fill_direction_category(out_path):
