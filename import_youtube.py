@@ -55,5 +55,5 @@ def download_and_preprocess_data(urls_source_file, out_path):
 
 if __name__=="__main__":
     source_file = sys.argv[1]
-    out_path = os.path.join(const.DATA_DIR, sys.argv[2])
+    out_path = os.path.join(const.DATA_PATH, sys.argv[2])
     download_and_preprocess_data(source_file, out_path)

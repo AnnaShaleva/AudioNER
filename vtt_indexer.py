@@ -49,7 +49,7 @@ def parse_subs_into_word_tockens_list(source_path, subs_file):
     return result
 
 def index_subs_dataset(dataset_name):
-    dataset_path = os.path.join(const.DATA_DIR, dataset_name + "/", "subs/")
+    dataset_path = os.path.join(const.DATA_PATH, dataset_name + "/", "subs/")
     es = Elasticsearch(
             [const.ELASTIC_HOST]
             )
