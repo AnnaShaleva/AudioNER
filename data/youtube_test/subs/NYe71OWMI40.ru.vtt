@@ -1,0 +1,62 @@
+WEBVTT
+Kind: captions
+Language: ru
+Style:
+::cue(c.colorCCCCCC) { color: rgb(204,204,204);
+ }
+::cue(c.colorE5E5E5) { color: rgb(229,229,229);
+ }
+##
+
+00:00:00.210 --> 00:00:00.790 align:start position:0%
+ 
+[музыка]
+
+00:00:00.790 --> 00:00:00.800 align:start position:0%
+[музыка]
+ 
+
+00:00:00.800 --> 00:00:04.430 align:start position:0%
+[музыка]
+<c.colorCCCCCC>калифорнии<00:00:01.800><c> ужасные</c><00:00:02.310><c> пробки</c></c><c.colorE5E5E5><00:00:03.290><c> тянусь</c><00:00:04.290><c> уже</c></c>
+
+00:00:04.430 --> 00:00:04.440 align:start position:0%
+<c.colorCCCCCC>калифорнии ужасные пробки</c><c.colorE5E5E5> тянусь уже
+ </c>
+
+00:00:04.440 --> 00:00:11.750 align:start position:0%
+<c.colorCCCCCC>калифорнии ужасные пробки</c><c.colorE5E5E5> тянусь уже
+который<00:00:05.100><c> час</c></c><c.colorCCCCCC><00:00:07.040><c> ведь</c><00:00:08.040><c> все</c><00:00:08.220><c> уже</c></c>
+
+00:00:11.750 --> 00:00:11.760 align:start position:0%
+ 
+ 
+
+00:00:11.760 --> 00:00:15.380 align:start position:0%
+ 
+<c.colorCCCCCC>white</c>
+
+00:00:15.380 --> 00:00:15.390 align:start position:0%
+ 
+ 
+
+00:00:15.390 --> 00:00:20.970 align:start position:0%
+ 
+<c.colorE5E5E5>нет<00:00:16.390><c> вай-фая</c><00:00:16.750><c> и</c><00:00:17.880><c> света</c><00:00:18.880><c> на</c><00:00:19.630><c> мне</c></c><c.colorCCCCCC><00:00:20.020><c> нету</c></c>
+
+00:00:20.970 --> 00:00:20.980 align:start position:0%
+<c.colorE5E5E5>нет вай-фая и света на мне</c><c.colorCCCCCC> нету
+ </c>
+
+00:00:20.980 --> 00:00:25.679 align:start position:0%
+<c.colorE5E5E5>нет вай-фая и света на мне</c><c.colorCCCCCC> нету</c>
+<c.colorE5E5E5>умный<00:00:21.910><c> и</c></c><c.colorCCCCCC><00:00:22.360><c> от</c></c><c.colorE5E5E5><00:00:23.140><c> боже</c><00:00:23.970><c> не</c><00:00:24.970><c> срочно</c><00:00:25.450><c> нужна</c></c>
+
+00:00:25.679 --> 00:00:25.689 align:start position:0%
+<c.colorE5E5E5>умный и</c><c.colorCCCCCC> от</c><c.colorE5E5E5> боже не срочно нужна
+ </c>
+
+00:00:25.689 --> 00:00:27.990 align:start position:0%
+<c.colorE5E5E5>умный и</c><c.colorCCCCCC> от</c><c.colorE5E5E5> боже не срочно нужна
+перезагрузка</c>
+

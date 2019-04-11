@@ -1,0 +1,62 @@
+WEBVTT
+Kind: captions
+Language: ru
+Style:
+::cue(c.colorCCCCCC) { color: rgb(204,204,204);
+ }
+::cue(c.colorE5E5E5) { color: rgb(229,229,229);
+ }
+##
+
+00:00:01.399 --> 00:00:04.900 align:start position:0%
+ 
+солнце<00:00:02.399><c> светит</c>
+
+00:00:04.900 --> 00:00:04.910 align:start position:0%
+ 
+ 
+
+00:00:04.910 --> 00:00:06.170 align:start position:0%
+ 
+<c.colorE5E5E5>красотки</c>
+
+00:00:06.170 --> 00:00:06.180 align:start position:0%
+<c.colorE5E5E5>красотки
+ </c>
+
+00:00:06.180 --> 00:00:10.459 align:start position:0%
+<c.colorE5E5E5>красотки
+к<00:00:06.839><c> телевизору</c><00:00:07.529><c> ломятся</c></c><c.colorCCCCCC><00:00:08.010><c> спешке</c></c><c.colorE5E5E5><00:00:09.290><c> сердце</c><00:00:10.290><c> у</c></c>
+
+00:00:10.459 --> 00:00:10.469 align:start position:0%
+к телевизору ломятся<c.colorCCCCCC> спешке</c><c.colorE5E5E5> сердце у
+ </c>
+
+00:00:10.469 --> 00:00:12.919 align:start position:0%
+к телевизору ломятся<c.colorCCCCCC> спешке</c><c.colorE5E5E5> сердце у
+каждого<00:00:11.160><c> совсем</c></c><c.colorCCCCCC><00:00:11.969><c> ясно</c></c>
+
+00:00:12.919 --> 00:00:12.929 align:start position:0%
+каждого совсем<c.colorCCCCCC> ясно
+ </c>
+
+00:00:12.929 --> 00:00:15.910 align:start position:0%
+каждого совсем<c.colorCCCCCC> ясно</c>
+<c.colorE5E5E5>вуаля</c><c.colorCCCCCC><00:00:13.830><c> вернул</c><00:00:14.250><c> заварила</c><00:00:14.730><c> решку</c></c>
+
+00:00:15.910 --> 00:00:15.920 align:start position:0%
+<c.colorE5E5E5>вуаля</c><c.colorCCCCCC> вернул заварила решку
+ </c>
+
+00:00:15.920 --> 00:00:17.420 align:start position:0%
+<c.colorE5E5E5>вуаля</c><c.colorCCCCCC> вернул заварила решку
+бабу</c>
+
+00:00:17.420 --> 00:00:17.430 align:start position:0%
+<c.colorCCCCCC>бабу
+ </c>
+
+00:00:17.430 --> 00:00:21.420 align:start position:0%
+<c.colorCCCCCC>бабу
+[музыка]</c>
+
