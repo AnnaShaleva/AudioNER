@@ -15,10 +15,13 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
     if not os.path.isdir(subcategory_samples_path):
         os.makedirs(subcategory_samples_path)
     
-    sample_path = os.path.join(subcategory_samples_path, str(source_id) + ".m4a")
+    sample_path = os.path.join(subcategory_samples_path, str(source_id) + ".wav")
 
     p = subprocess.Popen(["ffmpeg",
         "-i", audio_path,
+        "-acodec", "pcm_s16le",
+        "-ac", "1",
+        "-ar", "16000",
         "-ss", source['start'],
         "-to", source['end'],
         sample_path        
@@ -48,7 +51,7 @@ def get_audio_categories(dataset_name):
                                     'text': {
                                         'value': subcategory.strip(),
                                         'boost': 1.0,
-                                        'fuzziness': 2,
+                                        'fuzziness': 1,
                                         'prefix_length': 0,
                                         'max_expansions': 100
                                         }
