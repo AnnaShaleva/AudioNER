@@ -11,6 +11,9 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
     audiofile = os.path.splitext(os.path.splitext(source['filename'])[0])[0] + ".m4a"
     audio_path = os.path.join(const.DATA_PATH, dataset_name + "/", "audio/", audiofile)
 
+    if not os.path.isfile(audio_path):
+        return
+
     subcategory_samples_path = os.path.join(const.DATA_PATH, dataset_name + "/", "categories_samples/", category + "/", subcategory + "/")
     if not os.path.isdir(subcategory_samples_path):
         os.makedirs(subcategory_samples_path)

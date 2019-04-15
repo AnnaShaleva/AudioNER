@@ -23,35 +23,39 @@ def download_and_preprocess_data(urls_source_file, out_path):
 
     with open (urls_source_file, "r") as f:
         for url in f:
-            try:
-                playlist = pafy.get_playlist(url)
-                for item in playlist['items']:
-                    #downloading subs
-                    filename = os.path.join(subs_out_path, "%(id)s.%(ext)s")
-                    p = subprocess.Popen(["youtube-dl", 
-                        "-o", filename,
-                        "-v", "--skip-download",
-                        "--write-auto-sub",
-                        "--sub-format", "vtt",
-                        "--sub-lang", "ru",
-                        item['pafy'].videoid],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-                    
-                    out, err = p.communicate()
+            playlist = pafy.get_playlist(url)
+            for item in playlist['items']:
+                try:
+                    try:
+                        #downloading subs
+                        filename = os.path.join(subs_out_path, "%(id)s.%(ext)s")
+                        p = subprocess.Popen(["youtube-dl", 
+                            "-o", filename,
+                            "-v", "--skip-download",
+                            "--write-auto-sub",
+                            "--sub-format", "vtt",
+                            "--sub-lang", "ru",
+                            item['pafy'].videoid],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+                        
+                        out, err = p.communicate()
 
-                    if p.returncode != 0:
-                        raise Exception("Failed to download subs: %s" % str(err))
-                    print("Subs were downloaded")
+                        if p.returncode != 0:
+                            raise Exception("Failed to download subs: %s" % str(err))
+                        print("%s: \nsubs were downloaded" % item['pafy'].videoid)
 
-                    # downloading audio
-                    audio = item['pafy'].getbestaudio("m4a")
-                    filename = os.path.join(audio_out_path, item['pafy'].videoid + "." + audio.extension)
-                    result = audio.download(filename)
-                    print(result + " was downloaded")         
+                        # downloading audio
+                        audio = item['pafy'].getbestaudio("m4a")
+                        filename = os.path.join(audio_out_path, item['pafy'].videoid + "." + audio.extension)
+                        result = audio.download(filename)
+                        print("audeo was downloaded")        
+                    except:
+                        pass
+                except:
+                    pass
 
-            except:
-                raise
+            
 
 if __name__=="__main__":
     source_file = sys.argv[1]
