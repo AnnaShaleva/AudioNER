@@ -45,6 +45,9 @@ def download_and_preprocess_data(urls_source_file, out_path):
                             raise Exception("Failed to download subs: %s" % str(err))
                         print("%s: \nsubs were downloaded" % item['pafy'].videoid)
 
+                        if not os.path.isfile(os.path.join(subs_out_path, item['pafy'].videoid + ".ru.vtt")):
+                            continue
+
                         # downloading audio
                         audio = item['pafy'].getbestaudio("m4a")
                         filename = os.path.join(audio_out_path, item['pafy'].videoid + "." + audio.extension)
