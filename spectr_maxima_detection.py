@@ -6,6 +6,27 @@ from scipy.ndimage.filters import maximum_filter, minimum_filter
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 import sys
 
+def cut_audio(source_path, out_path, start, end):
+    p = subprocess.Popen(["ffmpeg",
+            "-i", source_path,
+            "-acodec", "pcm_s16le",
+            "-ac", "1",
+            "-ar", "16000",
+            "-ss", start,
+            #"-to", source['end'],
+            "-to", end,
+            out_path        
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
+        out, err = p.communicate()
+
+        if p.returncode != 0:
+            raise Exception("Failed to cut audio: %s" % str(err))
+        
+
+
 def detect_maxima(source):
     sr_value, x_value = scipy.io.wavfile.read(source)
 
@@ -31,8 +52,8 @@ def detect_maxima(source):
     plt.clf()
 
     #Get maxima
-    neighborhood_size = 20
-    threshhold = 1000
+    neighborhood_size = 100
+    threshhold = 500
     data_max = maximum_filter(Sxx, neighborhood_size)
     maxima = (Sxx == data_max)
     data_min = minimum_filter(Sxx, neighborhood_size)
