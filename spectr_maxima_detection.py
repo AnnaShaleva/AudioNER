@@ -9,45 +9,55 @@ from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 
 sr_value, x_value = scipy.io.wavfile.read("cut.wav")
 
+# Plot audio
+N = x_value.shape[0]
+L = N / sr_value
+plt.plot(np.arange(N) / sr_value, x_value)
+plt.title('Audio')
+plt.xlabel('Time [s]')
+plt.ylabel('Amplitude [?]')
+plt.savefig('audio.png')
+plt.clf()
+
+#Get spectrogram
 f, t, Sxx= signal.spectrogram(x_value,sr_value)
 
-neighborhood_size = 5
-threshhold = 0.1
+#Plot spectrogram
+plt.pcolormesh(t, f, Sxx)
+plt.xlabel('Time [sec]')
+plt.ylabel('Frequency [Hz]')
+plt.title('Spectrogram')
+plt.savefig('spectrogram.png')
+plt.clf()
+
+#Get maxima
+neighborhood_size = 20
+threshhold = 1000
 data_max = maximum_filter(Sxx, neighborhood_size)
 maxima = (Sxx == data_max)
 data_min = minimum_filter(Sxx, neighborhood_size)
 diff = ((data_max - data_min) > threshhold)
 maxima[diff == 0] = 0
 
-plt.pcolormesh(t, f, maxima)
-plt.savefig('maxima.png')
+#Get maxima with erosion
+local_max = maximum_filter(Sxx, neighborhood_size) == Sxx
+background = (Sxx == 0)
+eroded_background = binary_erosion(background, generate_binary_structure(2, 2))
+eroded_maxima = local_max ^ eroded_background
 
-plt.pcolormesh(t, f, Sxx)
-neighbors = generate_binary_structure(4, 4)
-local_max = maximum_filter(Sxx, footprint=neighbors) == Sxx
-print(local_max)
-background = (Sxx < 0.1)
-print(background)
-eroded_background = binary_erosion(background, structure=neighbors, border_value=1)
-print(eroded_background)
-detected_peaks = local_max ^ eroded_background
 
-plt.ylabel("Frequency [Hz]")
-plt.xlabel("Time [sec]")
-plt.savefig('Testplot.png')
-plt.pcolormesh(t, f, detected_peaks)
-plt.ylabel("Frequency [Hz]")
-plt.xlabel("Time [sec]")
-plt.savefig('Testplot_peaks.png')
+#Plot spectrogram
+im = plt.pcolormesh(t, f, maxima)
+plt.xlabel('Time [sec]')
+plt.ylabel('Frequency [Hz]')
+plt.title('Spectrogram maxima')
+plt.savefig('spectrogram_maxima.png')
+plt.clf()
 
-N = x_value.shape[0]
-L = N / sr_value
-
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.plot(np.arange(N) / sr_value, x_value)
-ax.set_xlabel('Time [s]')
-ax.set_ylabel('Amplitude [?]')
-
-fig.savefig('audio.png')
-
+# Plot eroded spectrogram
+im = plt.pcolormesh(t, f, eroded_maxima)
+plt.xlabel('Time [sec]')
+plt.ylabel('Frequency [Hz]')
+plt.title('Spectrogram maxima')
+plt.savefig('eroded_spectrogram_maxima.png')
+plt.clf()
