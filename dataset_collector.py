@@ -7,12 +7,14 @@ import subprocess
 import scipy
 from scipy.ndimage.filters import maximum_filter, minimum_filter
 import numpy as np
+import scipy.io.wavfile
+from scipy import signal
 
 import constants as const
 
 def get_times_of_spectr_maxima(source_path):
     sr_value, x_value = scipy.io.wavfile.read(source_path)
-    f, t, Sxx = scipy.signal.spectrogram(x_value, sr_value)
+    f, t, Sxx = signal.spectrogram(x_value, sr_value)
 
     data_max = maximum_filter(Sxx, const.NEIGHBORHOOD_SIZE)
     maxima = (Sxx == data_max)
@@ -37,8 +39,10 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
     subcategory_samples_path = os.path.join(const.DATA_PATH, dataset_name + "/", "categories_samples/", category + "/", subcategory + "/")
     if not os.path.isdir(subcategory_samples_path):
         os.makedirs(subcategory_samples_path)
-    
+
     sample_path = os.path.join(subcategory_samples_path, str(source_id) + ".wav")
+    if os.path.isfile(sample_path):
+        return
 
     p = subprocess.Popen(["ffmpeg",
         "-i", audio_path,
@@ -58,17 +62,21 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
         raise Exception("Failed to cut audio at step 1: %s" % str(err))
 
     maxima_time = get_times_of_spectr_maxima(sample_path)
-    start = datetime.datetime.strptime(source['start'], '%H:%M:%S.%f').time()
-    if maxima_time & start > datetime.timedelta(seconds=0.25):
+    start_time = datetime.datetime.strptime(source['start'], '%H:%M:%S.%f')
+    start = datetime.timedelta(hours=start_time.hour, minutes=start_time.minute, seconds=start_time.second, microseconds=start_time.microsecond) 
+    if (len(maxima_time) > 0) & (start > datetime.timedelta(seconds=0.25)):
         start += datetime.timedelta(seconds=min(maxima_time)) - datetime.timedelta(seconds=0.25)
+    
+    print(source['start'])
+    print(start)
 
     p = subprocess.Popen(["ffmpeg",
                           "-i", audio_path,
                           "-acodec", "pcm_s16le",
                           "-ac", "1",
                           "-ar", "16000",
-                          "-ss", start,
-                          "-t", 0.5,
+                          "-ss", str(start),
+                          "-t", "0.5",
                           sample_path
                           ],
                          stdout=subprocess.PIPE,
