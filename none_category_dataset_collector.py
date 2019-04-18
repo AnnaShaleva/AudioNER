@@ -25,21 +25,21 @@ def cut_audio(dataset_name, source_file, periods_to_rm):
     name_count = len([name for name in os.listdir(category_samples_path) if os.path.isfile(name)])
 
     if not periods_to_rm:
-        p = subprocess.Popen(["ffmpeg",
-                              "-i", source_audio_path,
-                              "-acodec", "pcm_s16le",
-                              "-ac", "1",
-                              "-ar", "16000",
-                              category_samples_path + name_count + ".wav"
-                              ],
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+#        p = subprocess.Popen(["ffmpeg",
+#                              "-i", source_audio_path,
+#                              "-acodec", "pcm_s16le",
+#                              "-ac", "1",
+#                              "-ar", "16000",
+#                              category_samples_path + str(name_count) + ".wav"
+#                              ],
+#                             stdout=subprocess.PIPE,
+#                             stderr=subprocess.PIPE)
 
-        out, err = p.communicate()
+ #       out, err = p.communicate()
 
-        if p.returncode != 0:
-            raise Exception("Failed to cut audio at step 1: %s" % str(err))
-
+#        if p.returncode != 0:
+#            raise Exception("Failed to cut audio at step 1: %s" % str(err))
+        print(source_audio_path + ": Nothing found")
         return
 
     periods_to_rm.sort()
@@ -89,31 +89,33 @@ def get_none_audio_category(dataset_name):
     )
     for audio_file in os.listdir(os.path.join(const.DATA_PATH, dataset_name + "/", "audio/")):
         periods_to_rm = []
-        id = os.path.splitext(audio_file)
+        video_id = os.path.splitext(audio_file)[0]
         for category_file in os.listdir(const.CATEGORIES_PATH):
             category = os.path.splitext(category_file)[0]
             with open(os.path.join(const.CATEGORIES_PATH, category_file), 'r') as f:
                 for subcategory in f:
                     matches = es.search(index=dataset_name,
-                                        body={
-                                            'query': {
-                                                'match': {
-                                                    'filename' : id + ".ru.vtt"
-                                                },
-                                                'fuzzy': {
-                                                    'text': {
-                                                        'value': subcategory.strip(),
-                                                        'boost': 1.0,
-                                                        'fuzziness': 1,
-                                                        'prefix_length': 0,
-                                                        'max_expansions': 100
-                                                    }
-                                                }
-                                            }
+                            body={
+                                'query': {
+                                    'bool': {
+                                        'must': { 'match': {'filename': video_id + '.ru.vtt'}}, 
+                                        'must': {
+                                            'fuzzy': {
+                                                'text': {
+                                                                'value': subcategory.strip(),
+                                                                'boost': 1.0,
+                                                                'fuzziness': 1,
+                                                                'prefix_length': 0,
+                                                                'max_expansions': 100
+                                                            } 
+                                            }}
                                         }
-                                        )
+                                        }
+                                    }
+                                    
+                            )
                     for item in matches['hits']['hits']:
-                        periods_to_rm.append({'start': item["_source"]["start"], 'end': item["_source"]["end"]})
+                        periods_to_rm.append((item["_source"]["start"], item["_source"]["end"], subcategory))
         cut_audio(dataset_name, audio_file, periods_to_rm)
 
 if __name__ == "__main__":
