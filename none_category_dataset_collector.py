@@ -95,27 +95,23 @@ def get_none_audio_category(dataset_name):
             with open(os.path.join(const.CATEGORIES_PATH, category_file), 'r') as f:
                 for subcategory in f:
                     matches = es.search(index=dataset_name,
-                            body={
-                                'query': {
-                                    'bool': {
-                                        'must': { 'match': {'filename': video_id + '.ru.vtt'}}, 
-                                        'must': {
-                                            'fuzzy': {
-                                                'text': {
-                                                                'value': subcategory.strip(),
-                                                                'boost': 1.0,
-                                                                'fuzziness': 1,
-                                                                'prefix_length': 0,
-                                                                'max_expansions': 100
-                                                            } 
-                                            }}
+                                        body={
+                                            'query': {
+                                                'fuzzy': {
+                                                    'text': {
+                                                        'value': subcategory.strip(),
+                                                        'boost': 1.0,
+                                                        'fuzziness': 1,
+                                                        'prefix_length': 0,
+                                                        'max_expansions': 100
+                                                    }
+                                                }
+                                            }
                                         }
-                                        }
-                                    }
-                                    
-                            )
+                                        )
                     for item in matches['hits']['hits']:
-                        periods_to_rm.append((item["_source"]["start"], item["_source"]["end"], subcategory))
+                        if item["_source"]["filename"] == video_id + ".ru.vtt":
+                            periods_to_rm.append((item["_source"]["start"], item["_source"]["end"], subcategory))
         cut_audio(dataset_name, audio_file, periods_to_rm)
 
 if __name__ == "__main__":
