@@ -25,20 +25,20 @@ def cut_audio(dataset_name, source_file, periods_to_rm):
     name_count = len([name for name in os.listdir(category_samples_path) if os.path.isfile(name)])
 
     if not periods_to_rm:
-#        p = subprocess.Popen(["ffmpeg",
-#                              "-i", source_audio_path,
-#                              "-acodec", "pcm_s16le",
-#                              "-ac", "1",
-#                              "-ar", "16000",
-#                              category_samples_path + str(name_count) + ".wav"
-#                              ],
-#                             stdout=subprocess.PIPE,
-#                             stderr=subprocess.PIPE)
+        p = subprocess.Popen(["ffmpeg",
+                             "-i", source_audio_path,
+                             "-acodec", "pcm_s16le",
+                             "-ac", "1",
+                             "-ar", "16000",
+                             category_samples_path + str(name_count) + ".wav"
+                             ],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
 
- #       out, err = p.communicate()
+        out, err = p.communicate()
 
-#        if p.returncode != 0:
-#            raise Exception("Failed to cut audio at step 1: %s" % str(err))
+        if p.returncode != 0:
+            raise Exception("Failed to cut audio at step 1: %s" % str(err))
         print(source_audio_path + ": Nothing found")
         return
 
@@ -53,7 +53,7 @@ def cut_audio(dataset_name, source_file, periods_to_rm):
                           "-ar", "16000",
                           "-ss", "00.00.00",
                           "-to", periods_to_rm[0][0],
-                          category_samples_path + name_count + ".wav"
+                          category_samples_path + str(name_count) + ".wav"
                           ],
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
@@ -75,7 +75,7 @@ def cut_audio(dataset_name, source_file, periods_to_rm):
                                   "-ar", "16000",
                                   "-ss", periods_to_rm[i - 1][1],
                                   "to", periods_to_rm[i][0],
-                                  category_samples_path + name_count + ".wav"
+                                  category_samples_path + str(name_count) + ".wav"
                                   ],
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
@@ -94,7 +94,7 @@ def cut_audio(dataset_name, source_file, periods_to_rm):
                           "-ac", "1",
                           "-ar", "16000",
                           "-ss", periods_to_rm[len[periods_to_rm] - 1][1],
-                          category_samples_path + name_count + ".wav"
+                          category_samples_path + str(name_count) + ".wav"
                           ],
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
