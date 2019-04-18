@@ -64,19 +64,21 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
     maxima_time = get_times_of_spectr_maxima(sample_path)
     start_time = datetime.datetime.strptime(source['start'], '%H:%M:%S.%f')
     start = datetime.timedelta(hours=start_time.hour, minutes=start_time.minute, seconds=start_time.second, microseconds=start_time.microsecond) 
-    if (len(maxima_time) > 0) & (start > datetime.timedelta(seconds=0.25)):
-        start += datetime.timedelta(seconds=min(maxima_time)) - datetime.timedelta(seconds=0.25)
+    if (len(maxima_time) > 0) & (start > datetime.timedelta(seconds=0.1)):
+        start += datetime.timedelta(seconds=min(maxima_time)) - datetime.timedelta(seconds=0.1)
+        print("Start was changed")
     
     print(source['start'])
     print(start)
 
     p = subprocess.Popen(["ffmpeg",
+                          "-y",
                           "-i", audio_path,
                           "-acodec", "pcm_s16le",
                           "-ac", "1",
                           "-ar", "16000",
                           "-ss", str(start),
-                          "-t", "0.5",
+                          "-t", "0.8",
                           sample_path
                           ],
                          stdout=subprocess.PIPE,
