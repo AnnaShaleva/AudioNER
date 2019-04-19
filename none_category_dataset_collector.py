@@ -14,6 +14,7 @@ import constants as const
 
 
 def cut_audio(dataset_name):
+    print("################## STARTED CUTTING #################")
     source_path = os.path.join(const.DATA_PATH, dataset_name + "/", "categories_samples/", "none/", "tmp/")
     if not os.path.isdir(source_path):
         return
@@ -41,10 +42,14 @@ def cut_audio(dataset_name):
             out, err = p.communicate()
 
             if p.returncode != 0:
-                raise Exception("END OF AUDIO : %s" % str(err))
+                #raise Exception("END OF AUDIO : %s" % str(err))
+                print(str(err))
+                break
 
+            print(str(name_count) + " was saved")
             name_count += 1
             start += datetime.timedelta(seconds=3)
+           
 
 
 def clean_audio(dataset_name, source_file, periods_to_rm):
@@ -58,7 +63,6 @@ def clean_audio(dataset_name, source_file, periods_to_rm):
 
     name_count = len([name for name in os.listdir(category_samples_path) if os.path.isfile(os.path.join(category_samples_path, name))])
     
-    print('len = ' + str(name_count))
     if not periods_to_rm:
         p = subprocess.Popen(["ffmpeg",
                              "-i", source_audio_path,
@@ -79,11 +83,9 @@ def clean_audio(dataset_name, source_file, periods_to_rm):
 
     periods_to_rm.sort()
 
-    print(source_audio_path)
-    print(periods_to_rm)
+    print("Source: " + source_audio_path)
+    print("periods_to_rm.length: " + str(len(periods_to_rm)))
     outpath = category_samples_path + str(name_count) + '.wav'
-    print(outpath)
-    print(periods_to_rm[0][0])
     p = subprocess.Popen(["ffmpeg",
                           "-i", source_audio_path,
                           "-acodec", "pcm_s16le",
@@ -99,8 +101,9 @@ def clean_audio(dataset_name, source_file, periods_to_rm):
     out, err = p.communicate()
 
     if p.returncode != 0:
-        raise Exception("Failed to cut audio at zero step:" % str(err))
-
+        #raise Exception("Failed to cut audio at zero step:" % str(err))
+        pass
+    print("Rm first period")
 
     if len(periods_to_rm) > 1:
         for i in range(1, len(periods_to_rm)):
@@ -122,7 +125,8 @@ def clean_audio(dataset_name, source_file, periods_to_rm):
 
             if p.returncode != 0:
                 #raise Exception("Failed to cut audio at last step: %s" % str(err))
-                print(str(err))
+                pass
+            print("Rm period " + str(i))
 
     name_count = len([name for name in os.listdir(category_samples_path) if os.path.isfile(os.path.join(category_samples_path, name))])
  
@@ -140,9 +144,10 @@ def clean_audio(dataset_name, source_file, periods_to_rm):
     out, err = p.communicate()
 
     if p.returncode != 0:
-        raise Exception("Failed to cut audio at last step: %s" % str(err))
+        #raise Exception("Failed to cut audio at last step: %s" % str(err))
+        pass
 
-
+    print("Rm last period")
 
 def get_none_audio_category(dataset_name):
     es = Elasticsearch(
@@ -173,9 +178,11 @@ def get_none_audio_category(dataset_name):
                     for item in matches['hits']['hits']:
                         if item["_source"]["filename"] == video_id + ".ru.vtt":
                             periods_to_rm.append((item["_source"]["start"], item["_source"]["end"], subcategory))
-        clean_audio(dataset_name, audio_file, periods_to_rm)
+        clean_audio(dataset_name, audio_file, periods_to_rm) 
+        print('################################# CLEANED #############################') 
+    cut_audio(dataset_name)
 
 if __name__ == "__main__":
     dataset_name = sys.argv[1]
-    #get_none_audio_category(dataset_name)
-    cut_audio(dataset_name)
+    get_none_audio_category(dataset_name)
+   
