@@ -1,4 +1,4 @@
-from elasticsearch import Elasticsearch
+#from elasticsearch import Elasticsearch
 import sys
 import os
 import time
@@ -9,6 +9,8 @@ from scipy.ndimage.filters import maximum_filter, minimum_filter
 import numpy as np
 import scipy.io.wavfile
 from scipy import signal
+import contextlib
+import wave
 
 import constants as const
 
@@ -26,10 +28,15 @@ def cut_audio(dataset_name):
     for audio_file in os.listdir(source_path):
         audio_path = os.path.join(source_path, audio_file)
         start = datetime.timedelta(seconds=1)
+        with contextlib.closing(wave.open(audio_path, 'r')) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            duration = frames / float(rate)
+
+        duration = datetime.timedelta(seconds=duration)
         name_count = len([name for name in os.listdir(category_samples_path) if
                           os.path.isfile(os.path.join(category_samples_path, name))])
-        while(True):
-
+        while start < (duration - datetime.timedelta(seconds=4)):
             p = subprocess.Popen(["ffmpeg",
                                   "-i", audio_path,
                                   "-ss", str(start),
@@ -42,9 +49,7 @@ def cut_audio(dataset_name):
             out, err = p.communicate()
 
             if p.returncode != 0:
-                #raise Exception("END OF AUDIO : %s" % str(err))
-                print(str(err))
-                break
+                raise Exception("END OF AUDIO : %s" % str(err))
 
             print(str(name_count) + " was saved")
             name_count += 1
@@ -185,4 +190,5 @@ def get_none_audio_category(dataset_name):
 if __name__ == "__main__":
     dataset_name = sys.argv[1]
     get_none_audio_category(dataset_name)
-   
+    # dataset_name = "none_dataset"
+    # cut_audio(dataset_name)
