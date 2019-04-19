@@ -1,4 +1,4 @@
-#from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch
 import sys
 import os
 import time
