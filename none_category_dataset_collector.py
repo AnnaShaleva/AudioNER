@@ -12,9 +12,43 @@ from scipy import signal
 
 import constants as const
 
-def cut_audio(dataset_name, source_file, periods_to_rm):
-    source_audio_path = os.path.join(const.DATA_PATH, dataset_name + "/", "audio/", source_file)
 
+def cut_audio(dataset_name):
+    source_path = os.path.join(const.DATA_PATH, dataset_name + "/", "categories_samples/", "none/", "tmp/")
+    if not os.path.isdir(source_path):
+        return
+
+    category_samples_path = os.path.join(const.DATA_PATH, dataset_name + '/', "categories_samples/", "none/")
+    if not os.path.isdir(category_samples_path):
+        os.makedirs(category_samples_path)
+
+    for audio_file in os.listdir(source_path):
+        audio_path = os.path.join(source_path, audio_file)
+        start = datetime.timedelta(seconds=1)
+        name_count = len([name for name in os.listdir(category_samples_path) if
+                          os.path.isfile(os.path.join(category_samples_path, name))])
+        while(True):
+
+            p = subprocess.Popen(["ffmpeg",
+                                  "-i", audio_path,
+                                  "-ss", str(start),
+                                  "-t", "0.8",
+                                  category_samples_path + str(name_count) + ".wav"
+                                  ],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
+
+            out, err = p.communicate()
+
+            if p.returncode != 0:
+                raise Exception("END OF AUDIO : %s" % str(err))
+
+            name_count += 1
+            start += datetime.timedelta(seconds=3)
+
+
+def clean_audio(dataset_name, source_file, periods_to_rm):
+    source_audio_path = os.path.join(const.DATA_PATH, dataset_name + "/", "audio/", source_file)
     if not os.path.isfile(source_audio_path):
         return
 
@@ -139,8 +173,9 @@ def get_none_audio_category(dataset_name):
                     for item in matches['hits']['hits']:
                         if item["_source"]["filename"] == video_id + ".ru.vtt":
                             periods_to_rm.append((item["_source"]["start"], item["_source"]["end"], subcategory))
-        cut_audio(dataset_name, audio_file, periods_to_rm)
+        clean_audio(dataset_name, audio_file, periods_to_rm)
 
 if __name__ == "__main__":
     dataset_name = sys.argv[1]
-    get_none_audio_category(dataset_name)
+    #get_none_audio_category(dataset_name)
+    cut_audio(dataset_name)
