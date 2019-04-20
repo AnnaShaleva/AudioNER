@@ -33,10 +33,16 @@ def load_data(dataset_name):
                 os.remove(tmp_path1)
                 os.remove(tmp_path2)
                 os.remove(tmp_path3)
-                print(x.shape)
             subcategory_label += 1
         category_label += 1
-    np.random.shaffle(data)
+    np.random.shuffle(data)
+    reshaped_data = list(zip(*data))
+    X = reshaped_data[0]
+    Y1 = reshaped_data[1]
+    Y2 = reshaped_data[2]
+    print(X)
+    print(Y1)
+    print(Y2)
 
 if __name__ == '__main__':
     dataset_name = sys.argv[1]
