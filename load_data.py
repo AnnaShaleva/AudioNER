@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 import constants as const
 from normalize_audio import loud_norm, apply_bandpass_filter, correct_volume
@@ -32,9 +33,10 @@ def load_data(dataset_name):
                 os.remove(tmp_path1)
                 os.remove(tmp_path2)
                 os.remove(tmp_path3)
+                print(x.shape)
             subcategory_label += 1
         category_label += 1
-    print(data)
+    np.random.shaffle(data)
 
 if __name__ == '__main__':
     dataset_name = sys.argv[1]
