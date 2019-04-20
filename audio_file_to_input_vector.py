@@ -53,7 +53,7 @@ except ImportError:
         return train_inputs
 
 
-def audiofile_to_input_vector(audio_filename, numcep=26, numcontext=9):
+def audiofile_to_input_vector(audio_filename, numcep, numcontext):
     r"""
     Given a WAV audio file at ``audio_filename``, calculates ``numcep`` MFCC features
     at every 0.01s time step with a window length of 0.025s. Appends ``numcontext``
