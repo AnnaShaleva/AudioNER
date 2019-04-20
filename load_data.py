@@ -40,11 +40,24 @@ def load_data(dataset_name):
     X = reshaped_data[0]
     Y1 = reshaped_data[1]
     Y2 = reshaped_data[2]
-    print(X)
-    print(Y1)
-    print(Y2)
+    return X, Y1, Y2
+
+def get_test_and_train_data(dataset_name, train_part):
+    
+    (X, Y1, Y2) = load_data(dataset_name)
+    train_num = len(X) * train_part
+    test_num = train_num - len(X)
+    X_train = X[:train_num]
+    X_test = X[test_num:]
+    Y1_train = Y1[:train_num]
+    Y1_test = Y1[test_num:]
+    Y2_train = Y2[:train_num]
+    Y2_test = Y2[test_num:]
+
+    return (X_train, Y1_train, Y2_train), (X_test, Y1_test, Y2_test)
+
 
 if __name__ == '__main__':
     dataset_name = sys.argv[1]
-    load_data(dataset_name)
+    get_test_and_train_data(dataset_name, 0.75)
     #load_data('tiny_dataset')
