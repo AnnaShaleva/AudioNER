@@ -1,27 +1,35 @@
 import numpy as np
 from keras.utils import to_categorical
 from keras.models import Sequential
-from keras import layers
+from keras.layers.convolutional import Conv2D
+
+from keras.layers import Dense, Flatten, Activation, Dropout
 import sys
 
-from load_data import get_test_and_train_data
-
-X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test = get_test_and_train_data('tiny_dataset', 0.75)
-Y1_train = to_categorical(Y1_train)
-Y2_train = to_categorical(Y2_train)
-Y1_test = to_categorical(Y1_test)
-Y2_test = to_categorical(Y2_test)
-
+from load_data import load_data
+print('Load data...')
+X, Y1, Y2 = load_data('tiny_dataset')
+X = (np.array(X)).reshape(81, 40, 494, 1)
+Y1 = to_categorical(Y1)
+Y2 = to_categorical(Y2)
+print('############### X ##########')
+print(X)
+print('############ Y ###################')
+print(Y2)
+#Y1test = to_categorical(Y1_test)
+#Y2_test = to_categorical(Y2_test)
+print('Building model')
 model = Sequential()
-model.add(Conv2D(64, kernel_size = 3, activation = 'relu', input_shape = (40, 494)))
-model.add(Conv2D(32, kernel_size = 3, activation = 'relu'))
+model.add(Conv2D(32, kernel_size = 4, activation = 'relu', input_shape = (40, 494, 1)))
+model.add(Conv2D(16, kernel_size = 3, activation = 'relu'))
 model.add(Flatten())
-model.add(Dense(4, activation = 'softmax'))
+model.add(Dense(10, activation = 'softmax'))
 
-model.summary()
+print(model.summary())
 
-model,compile(optimizer='adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
-
-results = model.fit(X_train, Y2_train, validation_data = (X_test, Y2_test), epochs = 3)
-
+model.compile(optimizer='adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
+print('Fitting model...')
+results = model.fit(X, Y2, validation_split = 0.25, epochs = 10)
+model.save_weights('model_weights.h5')
+model.save('model.h5')
 print(np.mean(results.history["val_acc"]))
