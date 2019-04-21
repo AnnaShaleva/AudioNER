@@ -6,25 +6,44 @@ from keras.layers.convolutional import Conv2D
 from keras.layers import Dense, Flatten, Activation, Dropout
 import sys
 
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+
+import keras
+import tensorflow as tf
+config = tf.ConfigProto( device_count = {'GPU': 2 , 'CPU': 24} ) 
+sess = tf.Session(config=config) 
+keras.backend.set_session(sess)
+
 from load_data import load_data
+
+class DigitsModel(keras.Model):
+	def __init(self):
+		super(DigitsModel, self).__init__(name='d_cnn')
+		self.conv1 = keras.layers.(Conv2D(1, 256, padding = 'same', activation = tf.nn.relu, input_shape = (20, 494, 1)))
+		self.conv2 = keras.layers.(Conv2D(16, 128, padding = 'same', activation = tf.nn.relu))
+		self.conv3 = keras.layers.(Conv2D(32, 64, padding = 'same', activation = tf.nn.relu))
+		self.conv4 = keras.layers.(Conv2D(64, 32, padding = 'same', activation = tf.nn.relu))
+		self.conv5 = keras.layers.(Conv2D(128, 16, padding = 'same', activation = tf.nn.relu))
+		self.conv6 = keras.layers.(Conv2D(256, 8, activation = tf.nn.relu))
+		self.flatten = keras.layers.Flatten()
+		self.fc = keras.layaer.Dence(10, activation = tf.nn.relu, kernel_initializer = tf.initializer.variance_scaling, kernel_regulari)
+
+
+
 print('Load data...')
 X, Y1, Y2 = load_data('tiny_dataset')
-X = (np.array(X)).reshape(81, 40, 494, 1)
+print(len(X))
+X = (np.array(X)).reshape(81, 20, 494, 1)
 Y1 = to_categorical(Y1)
 Y2 = to_categorical(Y2)
-print('############### X ##########')
-print(X)
-print('############ Y ###################')
-print(Y2)
-#Y1_test = to_categorical(Y1_test)
-#Y2_test = to_categorical(Y2_test)
 print('Building model')
 model = Sequential()
-model.add(Conv2D(1, kernel_size = 256, padding = 'same', activation = 'relu', input_shape = (40, 494, 1)))
+model.add(Conv2D(1, kernel_size = 256, padding = 'same', activation = 'relu', input_shape = (20, 494, 1)))
 model.add(Conv2D(16, kernel_size = 128, padding = 'same', activation = 'relu'))
 model.add(Conv2D(32, kernel_size = 64, padding = 'same', activation = 'relu'))
 model.add(Conv2D(64, kernel_size = 32, padding = 'same', activation = 'relu', ))
-model.add(Conv2D(128, kernel_size = 16, activation = 'relu'))
+model.add(Conv2D(128, kernel_size = 16, padding = 'same', activation = 'relu'))
 model.add(Conv2D(256, kernel_size = 8, activation = 'relu'))
 
 model.add(Flatten())
