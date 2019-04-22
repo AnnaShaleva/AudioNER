@@ -36,7 +36,7 @@ def load_data(dataset_name):
             subcategory_label += 1
         category_label += 1
     np.random.shuffle(data)
-    reshaped_data = list(zip(*data))
+    reshaped_data = [list(a) for a in zip(*data)]
     X = reshaped_data[0]
     Y1 = reshaped_data[1]
     Y2 = reshaped_data[2]
@@ -44,8 +44,8 @@ def load_data(dataset_name):
 
 def get_test_and_train_data(dataset_name, train_part):
     
-    (X, Y1, Y2) = load_data(dataset_name)
-    train_num = len(X) * train_part
+    X, Y1, Y2 = load_data(dataset_name)
+    train_num = int(len(X) * train_part)
     test_num = train_num - len(X)
     X_train = X[:train_num]
     X_test = X[test_num:]
@@ -54,7 +54,7 @@ def get_test_and_train_data(dataset_name, train_part):
     Y2_train = Y2[:train_num]
     Y2_test = Y2[test_num:]
 
-    return (X_train, Y1_train, Y2_train), (X_test, Y1_test, Y2_test)
+    return X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test
 
 
 if __name__ == '__main__':
