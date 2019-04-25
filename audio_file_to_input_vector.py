@@ -2,7 +2,7 @@ import scipy.io.wavfile as wav
 import sys
 
 try:
-    from deepspeech.utils import audioToInputVector
+    from deepspeech import audioToInputVector
 except ImportError:
     import numpy as np
     from python_speech_features import mfcc
