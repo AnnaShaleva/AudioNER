@@ -10,19 +10,28 @@ DATA_PATH = os.path.join(PROJECT_ROOT_PATH, "data/")
 
 ### PARAMETRS ###
 
-# ElasticSearch Settings
+## ElasticSearch Settings
 ELASTIC_HOST = "localhost:9200"
 
 
-#Spectrogram settings
+## Spectrogram settings
 FREQUENCY_TRESHHOLD = 1000
 NEIGHBORHOOD_SIZE = 12
 AMPLITUDE_DIFFERENCE_TRASHHOLD = 100
 
 
-# MFCC parametrs
+## MFCC parametrs
 
 # Number of MFCC features
 N_INPUT = 26
-
 N_CONTEXT = 9
+
+## Model parametrs
+N_CLASSES = 2
+N_SUBCLASSES = 10
+VALIDATION_SPLIT = 0.15
+
+## Data format
+HEIGHT = 20
+LENGTH = 494
+
