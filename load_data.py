@@ -1,6 +1,8 @@
 import os
 import sys
 import numpy as np
+import csv
+import pandas as pd
 
 import constants as const
 from normalize_audio import loud_norm, apply_bandpass_filter, correct_volume
@@ -27,9 +29,13 @@ def load_data(dataset_name):
                 apply_bandpass_filter(tmp_path1, tmp_path2)
                 correct_volume(tmp_path2, tmp_path3)
                 x = audiofile_to_input_vector(audio_filename=tmp_path3, numcep=const.N_INPUT, numcontext=const.N_CONTEXT)
-                y1 = category_label
-                y2 = subcategory_label
-                data.append((x, y1, y2))
+                if (x.shape[0] == 20) & (x.shape[1] == 494):
+                    y1 = category_label
+                    y2 = subcategory_label
+                    data.append((x, y1, y2))
+                else:
+                    print(audio)
+                    print(x.shape)
                 os.remove(tmp_path1)
                 os.remove(tmp_path2)
                 os.remove(tmp_path3)
@@ -40,11 +46,31 @@ def load_data(dataset_name):
     X = reshaped_data[0]
     Y1 = reshaped_data[1]
     Y2 = reshaped_data[2]
+    dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
+    if not os.path.isdir(dataset_path):
+        os.mkdir(dataset_path)
+    df = pd.DataFrame({'Cat': Y1, 'Subcat': Y2})
+    df.to_csv(dataset_path + 'labels.csv', header=None, index=None)
+    i = 0
+    for element in X:
+        df = pd.DataFrame(element)
+        df.to_csv(dataset_path + str(i) + '.csv', header=None, index=None)
+        i += 1
+
     return X, Y1, Y2
 
 def get_test_and_train_data(dataset_name, train_part):
-    
-    X, Y1, Y2 = load_data(dataset_name)
+    dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
+    df = pd.read_csv(dataset_path + 'labels.csv', header=None)
+    Y1 = df.values[:, 0]
+    Y2 = df.values[:, 1]
+    print(Y1)
+    print(Y2)
+    X = []
+    for i in range(len(Y1)):
+        df = pd.read_csv(dataset_path + str(i) + '.csv', header=None)
+        X.append(df.values)
+    #X, Y1, Y2 = load_data(dataset_name)
     train_num = int(len(X) * train_part)
     test_num = train_num - len(X)
     X_train = X[:train_num]
@@ -59,5 +85,4 @@ def get_test_and_train_data(dataset_name, train_part):
 
 if __name__ == '__main__':
     dataset_name = sys.argv[1]
-    get_test_and_train_data(dataset_name, 0.75)
-    #load_data('tiny_dataset')
+    load_data(dataset_name)

@@ -55,8 +55,10 @@ def download_and_preprocess_data(urls_source_file, out_path):
                         print("audeo was downloaded")        
                     except:
                         pass
+                        #raise
                 except:
                     pass
+                   # raise
 
             
 

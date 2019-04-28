@@ -11,8 +11,8 @@ DATA_PATH = os.path.join(PROJECT_ROOT_PATH, "data/")
 ### PARAMETRS ###
 
 ## ElasticSearch Settings
-ELASTIC_HOST = "localhost:9200"
-
+ELASTIC_HOST = "168.61.86.72:8120"
+ELASTIC_TIMEOUT = 6000
 
 ## Spectrogram settings
 FREQUENCY_TRESHHOLD = 1000

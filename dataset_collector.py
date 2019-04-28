@@ -59,7 +59,8 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
     out, err = p.communicate()
 
     if p.returncode != 0:
-        raise Exception("Failed to cut audio at step 1: %s" % str(err))
+        #raise Exception("Failed to cut audio at step 1: %s" % str(err))
+        return 
 
     maxima_time = get_times_of_spectr_maxima(sample_path)
     start_time = datetime.datetime.strptime(source['start'], '%H:%M:%S.%f')
@@ -94,7 +95,8 @@ def cut_audio(dataset_name, source_id, source, category, subcategory):
 
 def get_audio_categories(dataset_name):
     es = Elasticsearch(
-            [const.ELASTIC_HOST]
+            hosts = [const.ELASTIC_HOST],
+            timeout=const.ELASTIC_TIMEOUT            
             )
     for category_file in os.listdir(const.CATEGORIES_PATH):
         category = os.path.splitext(category_file)[0]
