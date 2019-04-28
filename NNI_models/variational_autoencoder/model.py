@@ -27,8 +27,8 @@ def load_dataset(dataset_name, part_train):
     X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test = get_test_and_train_data(dataset_name, part_train)
     print('%d train samples were loaded' % len(X_train))
     print('%d test samples were loaded' % len(X_test))
-    X_train = (np.array(X_train)).reshape(len(X_train), const.HEIGHT, const.LENGTH)
-    X_test = (np.array(X_test)).reshape(len(X_test), const.HEIGHT, const.LENGTH)
+    X_train = (np.array(X_train)).reshape(len(X_train), [-1, const.HEIGHT * const.LENGTH])
+    X_test = (np.array(X_test)).reshape(len(X_test), [-1, const.HEIGHT * const.LENGTH])
     Y1_train = to_categorical(Y1_train, const.N_CLASSES)
     Y1_test = to_categorical(Y1_test, const.N_CLASSES)
     Y2_train = to_categorical(Y2_train, const.N_SUBCLASSES)
@@ -36,15 +36,20 @@ def load_dataset(dataset_name, part_train):
     return X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test
 
 def sampling(args):
-    z_mean, z_log_sigma, latent_dim = args
-    epsilon = K.random_normal(shape=(const.HEIGHT, const.LENGTH, latent_dim),
-                              mean=0., std=epsilon_std)
-    return z_mean + K.exp(z_log_sigma) * epsilon
+    z_mean, z_log_var = args
+    batch = K.shape(z_mean)[0]
+    dim = K.int_shape(z_mean)[1]
+    epsilon = K.random_normal(shape=(batch, dim))
+    return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
-def build_model(hyper_params, input_shape=(const.HEIGHT, const.LENGTH), num_classes=const.N_CLASSES, num_subclasses=const.N_SUBCLASSES):
+def build_model(hyper_params, x_shape = const.HEIGHT, y_shape = const.LENGTH, num_classes=const.N_CLASSES, num_subclasses=const.N_SUBCLASSES):
     print('Building model...')
     #input layer
-    visible = Input(input_shape)
+    original_dim = x_shape * y_shape
+
+    # network parameters
+    input_shape = (original_dim,)
+    visible = Input(shape=input_shape)
 
     #encoder
     h = Dense(hyper_params['intermediate_dim'], activation='relu')(visible)
@@ -53,18 +58,15 @@ def build_model(hyper_params, input_shape=(const.HEIGHT, const.LENGTH), num_clas
 
     # note that "output_shape" isn't necessary with the TensorFlow backend
     # so you could write `Lambda(sampling)([z_mean, z_log_sigma])`
-    z = Lambda(sampling, output_shape=(hyper_params['latent_dim'],))([z_mean, z_log_sigma, hyper_params['latent_dim']])
+    z = Lambda(sampling, output_shape=(hyper_params['latent_dim'],))([z_mean, z_log_sigma])
 
     #decoder
     decoded_h = Dense(hyper_params['intermediate_dim'], activation='relu')(z)
     decoded_mean = Dense(input_shape, activation='sigmoid')(decoded_h)
 
-    #hidden
-    flatten = Flatten()(decoded_mean)
-
     #output layer
-    classes_output = Dense(const.N_CLASSES, activation='softmax')(flatten)
-    subclasses_output = Dense(const.N_SUBCLASSES, activation='softmax')(flatten)
+    classes_output = Dense(const.N_CLASSES, activation='softmax')(decoded_mean)
+    subclasses_output = Dense(const.N_SUBCLASSES, activation='softmax')(decoded_mean)
     model = Model(inputs=visible, outputs=[classes_output, subclasses_output])
 
     # summarize layers
