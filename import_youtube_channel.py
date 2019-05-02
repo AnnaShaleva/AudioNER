@@ -23,7 +23,8 @@ def download_and_preprocess_data(urls_source_file, out_path):
 
     with open (urls_source_file, "r") as f:
         for url in f:
-            list_of_one_audio = list(pafy.new(url))
+            list_of_one_audio = []
+            list_of_one_audio.append(pafy.new(url))
             for item in list_of_one_audio:
                 try:
                     try:
