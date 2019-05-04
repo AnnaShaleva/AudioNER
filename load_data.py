@@ -3,6 +3,8 @@ import sys
 import numpy as np
 import csv
 import pandas as pd
+import scipy.io.wavfile
+from scipy import signal
 
 import constants as const
 from normalize_audio import loud_norm, apply_bandpass_filter, correct_volume
@@ -29,10 +31,12 @@ def load_data(dataset_name):
                 apply_bandpass_filter(tmp_path1, tmp_path2)
                 correct_volume(tmp_path2, tmp_path3)
                 x = audiofile_to_input_vector(audio_filename=tmp_path3, numcep=const.N_INPUT, numcontext=const.N_CONTEXT)
-                if (x.shape[0] == 20) & (x.shape[1] == 494):
+                sr_value, x_value = scipy.io.wavfile.read(tmp_path3)
+                f, t, Sxx = signal.spectrogram(x_value, sr_value)
+                if (Sxx.shape[0] == 129) & (x.shape[1] == 57) & (x.shape[0] == 20) & (x.shape[1] == 494):
                     y1 = category_label
                     y2 = subcategory_label
-                    data.append((x, y1, y2))
+                    data.append((x, Sxx, y1, y2))
                 else:
                     print(audio)
                     print(x.shape)
@@ -44,8 +48,9 @@ def load_data(dataset_name):
     np.random.shuffle(data)
     reshaped_data = [list(a) for a in zip(*data)]
     X = reshaped_data[0]
-    Y1 = reshaped_data[1]
-    Y2 = reshaped_data[2]
+    X_spectrogram = reshaped_data[1]
+    Y1 = reshaped_data[2]
+    Y2 = reshaped_data[3]
     dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
     if not os.path.isdir(dataset_path):
         os.mkdir(dataset_path)
@@ -57,7 +62,13 @@ def load_data(dataset_name):
         df.to_csv(dataset_path + str(i) + '.csv', header=None, index=None)
         i += 1
 
-    return X, Y1, Y2
+    i = 0
+    for element in X_spectrogram:
+        df = pd.DataFrame(element)
+        df.to_csv(dataset_path + str(i) + '_spectrogram.csv', header=None, index=None)
+        i += 1
+
+    return X, X_spectrogram, Y1, Y2
 
 def get_test_and_train_data(dataset_name, train_part):
     dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
@@ -66,21 +77,26 @@ def get_test_and_train_data(dataset_name, train_part):
     Y2 = df.values[:, 1]
     print(Y1)
     print(Y2)
-    X = []
+    X_mfcc = []
+    X_spectrogram = []
     for i in range(len(Y1)):
         df = pd.read_csv(dataset_path + str(i) + '.csv', header=None)
-        X.append(df.values)
+        X_mfcc.append(df.values)
+        df_spectrogram = pd.read_csv(dataset_path + str(i) + '_spectrogram.csv', header=None)
+        X_spectrogram.append(df_spectrogram.values)
     #X, Y1, Y2 = load_data(dataset_name)
-    train_num = int(len(X) * train_part)
-    test_num = train_num - len(X)
-    X_train = X[:train_num]
-    X_test = X[test_num:]
+    train_num = int(len(X_mfcc) * train_part)
+    test_num = train_num - len(X_mfcc)
+    X_mfcc_train = X_mfcc[:train_num]
+    X_mfcc_test = X_mfcc[test_num:]
+    X_spectrogram_train = X_spectrogram[:train_num]
+    X_spectrogram_test = X_spectrogram[test_num:]
     Y1_train = Y1[:train_num]
     Y1_test = Y1[test_num:]
     Y2_train = Y2[:train_num]
     Y2_test = Y2[test_num:]
 
-    return X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test
+    return X_mfcc_train, X_spectrogram_train, Y1_train, Y2_train, X_mfcc_test, X_spectrogram_test, Y1_test, Y2_test
 
 
 if __name__ == '__main__':
