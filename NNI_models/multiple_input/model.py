@@ -10,7 +10,6 @@ from tensorflow.python.keras.callbacks import TensorBoard
 from tensorflow.keras.utils import to_categorical, plot_model
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Flatten, Activation, Dropout, Conv2D, MaxPooling2D, UpSampling2D
-from tensorflow.keras.layers.merge import concatinate
 import nni
 sys.path.insert(0, '/headless/shared/AudioNER/')
 
@@ -43,35 +42,27 @@ def build_model(hyper_params, mfcc_input_shape=(const.HEIGHT, const.LENGTH, 1), 
 
     #mfcc_model
     visible0 = Input(shape=mfcc_input_shape)
-    conv0_0 = Conv2D(128, kernel_size=(8, 10), use_bias=True, padding='same', activation='relu')(visible0)
+    conv0_0 = Conv2D(32, kernel_size=(8, 10), use_bias=True, padding='same', activation='relu')(visible0)
     pool0_1 = MaxPooling2D((2, 2), padding='same')(conv0_0)
-    conv0_1 = Conv2D(128, kernel_size=(4, 10), use_bias=True, padding='same', activation='relu')(pool0_1)
+    conv0_1 = Conv2D(32, kernel_size=(4, 10), use_bias=True, padding='same', activation='relu')(pool0_1)
     pool0_2 = MaxPooling2D((2, 2), padding='same')(conv0_1)
-    conv0_2 = Conv2D(32, kernel_size=(2, 5), use_bias=True, padding='same', activation='relu')(pool0_2)
-    pool0_3 = MaxPooling2D((2, 2), padding='same')(conv0_2)
-    conv0_3 = Conv2D(32, kernel_size=(1, 1), use_bias=True, padding='same', activation='relu')(pool0_3)
-    pool0_4 = MaxPooling2D((2, 2), padding='same')(conv0_3)
-    flatten0 = Flatten()(pool0_4)
+    flatten0 = Flatten()(pool0_2)
 
-    # spectrogram_model
+    #spectrogram input
     visible1 = Input(shape=spectrogram_input_shape)
-    conv1_0 = Conv2D(128, kernel_size=(16, 8), use_bias=True, padding='same', activation='relu')(visible1)
+    conv1_0 = Conv2D(32, kernel_size=(16, 4), use_bias=True, padding='same', activation='relu')(visible1)
     pool1_1 = MaxPooling2D((2, 2), padding='same')(conv1_0)
-    conv1_1 = Conv2D(128, kernel_size=(8, 8), use_bias=True, padding='same', activation='relu')(pool1_1)
+    conv1_1 = Conv2D(32, kernel_size=(8, 4), use_bias=True, padding='same', activation='relu')(pool1_1)
     pool1_2 = MaxPooling2D((2, 2), padding='same')(conv1_1)
-    conv1_2 = Conv2D(32, kernel_size=(4, 4), use_bias=True, padding='same', activation='relu')(pool1_2)
-    pool1_3 = MaxPooling2D((2, 2), padding='same')(conv1_2)
-    conv1_3 = Conv2D(32, kernel_size=(2, 1), use_bias=True, padding='same', activation='relu')(pool1_3)
-    pool1_4 = MaxPooling2D((2, 2), padding='same')(conv1_3)
-    flatten1 = Flatten()(pool1_4)
+    flatten1 = Flatten()(pool1_2)
 
-    # merge input models
-    merge = concatinate(flatten0, flatten1)
+    #merge input models
+    merge = tf.keras.layers.concatenate([flatten0, flatten1])
 
-    # interpretation model
+    #interpretation model
     classes_output = Dense(num_classes, activation='softmax')(merge)
-    dence = Dense(64, activation='relu')(merge)
-    subclasses_output = Dense(num_subclasses, activation='softmax')(dence)
+    dense = Dense(64, activation='relu')(merge)
+    subclasses_output = Dense(num_subclasses, activation='softmax')(dense)
 
     model = Model(inputs=[visible0, visible1], outputs=[classes_output, subclasses_output])
 
@@ -112,7 +103,7 @@ def train(args, params):
 
     print('Fitting model...')
     results = model.fit([X_mfcc_train, X_spectrogram_train], [Y1_train, Y2_train], epochs=args.epochs, verbose=1,
-                        validation_data=([X_mfcc_test, X_spectrogram_test][Y1_test, Y2_test]), callbacks=[SendMetrics(), TensorBoard(log_dir=TENSORBOARD_DIR)])
+                        validation_data=([X_mfcc_test, X_spectrogram_test], [Y1_test, Y2_test]), callbacks=[SendMetrics(), TensorBoard(log_dir=TENSORBOARD_DIR)])
 
     _, _, _, cat_acc, subcat_acc = model.evaluate([X_mfcc_test, X_spectrogram_test], [Y1_test, Y2_test], verbose=0)
     LOG.debug('Final result is: %d', subcat_acc)
