@@ -33,7 +33,7 @@ def load_data(dataset_name):
                 x = audiofile_to_input_vector(audio_filename=tmp_path3, numcep=const.N_INPUT, numcontext=const.N_CONTEXT)
                 sr_value, x_value = scipy.io.wavfile.read(tmp_path3)
                 f, t, Sxx = signal.spectrogram(x_value, sr_value)
-                if (Sxx.shape[0] == 129) & (x.shape[1] == 57) & (x.shape[0] == 20) & (x.shape[1] == 494):
+                if (Sxx.shape[0] == 129) & (Sxx.shape[1] == 57) & (x.shape[0] == 20) & (x.shape[1] == 494):
                     y1 = category_label
                     y2 = subcategory_label
                     data.append((x, Sxx, y1, y2))
