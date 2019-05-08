@@ -1,0 +1,75 @@
+{
+    "experimentParameters": {
+        "id": "IV8uKdcm",
+        "revision": 32,
+        "execDuration": 302,
+        "logDir": "/headless/nni/experiments/IV8uKdcm",
+        "maxSequenceId": 0,
+        "params": {
+            "tuner": {
+                "className": "TPE",
+                "builtinTunerName": "TPE",
+                "classArgs": {
+                    "optimize_mode": "maximize"
+                },
+                "checkpointDir": "/headless/nni/experiments/IV8uKdcm/checkpoint"
+            },
+            "clusterMetaData": [
+                {
+                    "key": "codeDir",
+                    "value": "/headless/shared/AudioNER/NNI_models/multiple_input/."
+                },
+                {
+                    "key": "command",
+                    "value": "python3 model.py"
+                }
+            ],
+            "trainingServicePlatform": "local",
+            "maxTrialNum": 10000,
+            "authorName": "Anna",
+            "versionCheck": true,
+            "experimentName": "multiple_input_model_keras",
+            "trialConcurrency": 1,
+            "maxExecDuration": 54000,
+            "searchSpace": {
+                "learning_rate": {
+                    "_value": [
+                        0.0001,
+                        0.0002,
+                        0.001,
+                        0.0005,
+                        0.005,
+                        0.01
+                    ],
+                    "_type": "choice"
+                },
+                "optimizer": {
+                    "_value": [
+                        "Adam",
+                        "SGD"
+                    ],
+                    "_type": "choice"
+                }
+            }
+        },
+        "startTime": 1557006017273
+    },
+    "trialMessage": [
+        {
+            "id": "CGW0e",
+            "status": "RUNNING",
+            "hyperParameters": {
+                "parameters": {
+                    "learning_rate": 0.01,
+                    "optimizer": "Adam"
+                },
+                "parameter_id": 0,
+                "parameter_source": "algorithm"
+            },
+            "logPath": "file://localhost:/headless/nni/experiments/IV8uKdcm/trials/CGW0e",
+            "startTime": 1557006027311,
+            "sequenceId": 0,
+            "intermediate": []
+        }
+    ]
+}

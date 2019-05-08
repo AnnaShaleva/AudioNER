@@ -27,8 +27,8 @@ def load_dataset(dataset_name, part_train):
     X_train, Y1_train, Y2_train, X_test, Y1_test, Y2_test = get_test_and_train_data(dataset_name, part_train)
     print('%d train samples were loaded' % len(X_train))
     print('%d test samples were loaded' % len(X_test))
-    X_train = (np.array(X_train)).reshape(len(X_train), [-1, const.HEIGHT * const.LENGTH])
-    X_test = (np.array(X_test)).reshape(len(X_test), [-1, const.HEIGHT * const.LENGTH])
+    X_train = (np.array(X_train)).reshape(len(X_train), const.HEIGHT * const.LENGTH)
+    X_test = (np.array(X_test)).reshape(len(X_test), const.HEIGHT * const.LENGTH)
     Y1_train = to_categorical(Y1_train, const.N_CLASSES)
     Y1_test = to_categorical(Y1_test, const.N_CLASSES)
     Y2_train = to_categorical(Y2_train, const.N_SUBCLASSES)
@@ -62,7 +62,7 @@ def build_model(hyper_params, x_shape = const.HEIGHT, y_shape = const.LENGTH, nu
 
     #decoder
     decoded_h = Dense(hyper_params['intermediate_dim'], activation='relu')(z)
-    decoded_mean = Dense(input_shape, activation='sigmoid')(decoded_h)
+    decoded_mean = Dense(original_dim, activation='sigmoid')(decoded_h)
 
     #output layer
     classes_output = Dense(const.N_CLASSES, activation='softmax')(decoded_mean)

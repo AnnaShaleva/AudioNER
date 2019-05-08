@@ -1,8 +1,9 @@
 import os
-def get_samples_from_path(name):
+import sys
+def get_samples_from_path(name, dataset_name):
     for category_folder in os.listdir(name):
         category_source_path = name + category_folder + '/'
-        category_dest_path = './data/test_dataset/categories_samples/' + category_folder + '/'
+        category_dest_path = './data/' + dataset_name + '/categories_samples/' + category_folder + '/'
         if not os.path.isdir(category_dest_path):
             os.mkdir(category_dest_path)
         for subcat_folder in os.listdir(category_source_path):
@@ -17,15 +18,16 @@ def get_samples_from_path(name):
                 os.popen('cp ' + source_sample_path + ' ' + dest_sample_path)
 
 if __name__=='__main__':
+    dataset_name = sys.argv[1]
     for i in range(1, 13):
         name = './data/heads_and_tails_' + str(i) + '/categories_samples/'
-        get_samples_from_path(name)
-    name = './data/echo_of_moscow_dataset/categories_samples/'
-    get_samples_from_path(name)
-    name = './data/snailkick_dataset/categories_samples/'
-    get_samples_from_path(name)
-    name = './data/sk2_dataset/categories_samples/'
-    get_samples_from_path(name)
-    name = './data/youtube_test/categories_samples/'
-    get_samples_from_path(name)
-
+        get_samples_from_path(name, dataset_name)
+    names = ['./data/echo_of_moscow_dataset/categories_samples/',
+    './data/snailkick_dataset/categories_samples/',
+    './data/sk2_dataset/categories_samples/',
+    './data/youtube_test/categories_samples/',
+    './data/audiobooks_dataset/categories_samples/',
+    './data/ht_old_dataset/categories_samples/',
+    './data/stories_dataset/categories_samples/']
+    for name in names:
+        get_samples_from_path(name, dataset_name)
