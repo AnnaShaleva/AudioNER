@@ -70,7 +70,32 @@ def load_data(dataset_name):
 
     return X, X_spectrogram, Y1, Y2
 
+
 def get_test_and_train_data(dataset_name, train_part):
+    dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
+    df = pd.read_csv(dataset_path + 'labels.csv', header=None)
+    Y1 = df.values[:, 0]
+    Y2 = df.values[:, 1]
+    print(Y1)
+    print(Y2)
+    X_mfcc = []
+    for i in range(len(Y1)):
+        df = pd.read_csv(dataset_path + str(i) + '.csv', header=None)
+        X_mfcc.append(df.values)
+    #X, Y1, Y2 = load_data(dataset_name)
+    train_num = int(len(X_mfcc) * train_part)
+    test_num = train_num - len(X_mfcc)
+    X_mfcc_train = X_mfcc[:train_num]
+    X_mfcc_test = X_mfcc[test_num:]
+    Y1_train = Y1[:train_num]
+    Y1_test = Y1[test_num:]
+    Y2_train = Y2[:train_num]
+    Y2_test = Y2[test_num:]
+
+    return X_mfcc_train, Y1_train, Y2_train, X_mfcc_test, Y1_test, Y2_test
+
+
+def get_test_and_train_data_with_spectrogram(dataset_name, train_part):
     dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
     df = pd.read_csv(dataset_path + 'labels.csv', header=None)
     Y1 = df.values[:, 0]

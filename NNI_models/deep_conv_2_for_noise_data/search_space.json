@@ -1,0 +1,13 @@
+{
+    "optimizer":{"_type":"choice","_value":["Adam", "SGD"]},
+    "dense_size":{"_type":"choice","_value":[256, 128, 64, 32]},
+    "learning_rate":{"_type":"choice","_value":[0.0001, 0.0002, 0.0005]},
+    "conv0_size": {"_type":"choice","_value":[256, 128, 64]},
+    "conv1_size": {"_type":"choice","_value":[256, 128, 64]},
+    "conv2_size": {"_type":"choice","_value":[128, 64, 32]},
+    "conv3_size": {"_type":"choice","_value":[128, 64, 32]},
+    "conv4_size": {"_type":"choice","_value":[128, 64, 32, 16]},
+    "conv5_size": {"_type":"choice","_value":[128, 64, 32, 16]},
+    "conv6_size": {"_type":"choice","_value":[64, 32, 16]},
+    "conv7_size": {"_type":"choice","_value":[64, 32, 16]}
+}
