@@ -71,8 +71,8 @@ if __name__=='__main__':
         category_source_path = dataset_path + category_folder + '/'
         for subcat_folder in os.listdir(category_source_path):
             subcat_source_path = category_source_path + subcat_folder + '/'
-            for sample in os.listdir(subcat_source_path):
-                speed_up_audio(subcat_source_path, sample)
+            #for sample in os.listdir(subcat_source_path):
+                #speed_up_audio(subcat_source_path, sample)
             for sample in os.listdir(subcat_source_path):
                 add_noise_to_audio(subcat_source_path, sample)
 
