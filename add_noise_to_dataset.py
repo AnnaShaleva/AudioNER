@@ -46,10 +46,11 @@ def add_noise_to_audio(path, name):
     source_sample_path = path + name
     
     sr_value, x_value = scipy.io.wavfile.read(source_sample_path)
-    target_snr = 100000
-    sig_avg_x = np.mean(x_value)
-    noise_avg_small = abs(sig_avg_x * target_snr)
-    noise_avg_large = abs(sig_avg_x * target_snr * 10)
+    target_snr_low = 2
+    target_snr_large = 10
+    sig_avg_x = np.mean(abs(x_value))
+    noise_avg_small = sig_avg_x * target_snr_low
+    noise_avg_large = sig_avg_x * target_snr_large
     noise_small = np.random.normal(.0, np.sqrt(noise_avg_small), len(x_value)).round().astype(int)
     noise_large = np.random.normal(.0, np.sqrt(noise_avg_large), len(x_value)).round().astype(int)
     y_value = np.asarray(x_value + noise_small, dtype=np.int16)
