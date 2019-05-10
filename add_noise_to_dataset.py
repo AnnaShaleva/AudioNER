@@ -49,7 +49,7 @@ def add_noise_to_audio(path, name):
     target_snr = 100000
     sig_avg_x = np.mean(x_value)
     noise_avg_small = abs(sig_avg_x * target_snr)
-    noise_avg_large = abs(sig_avg_x * target_snr)
+    noise_avg_large = abs(sig_avg_x * target_snr * 10)
     noise_small = np.random.normal(.0, np.sqrt(noise_avg_small), len(x_value)).round().astype(int)
     noise_large = np.random.normal(.0, np.sqrt(noise_avg_large), len(x_value)).round().astype(int)
     y_value = np.asarray(x_value + noise_small, dtype=np.int16)
