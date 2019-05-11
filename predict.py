@@ -14,7 +14,7 @@ def load_model(model_path, weights_path):
     loaded_model_json = json_file.read()
     loaded_model = model_from_json(loaded_model_json)
     loaded_model.load_weights(weights_path)
-    model.compile(loss=keras.losses.categorical_crossentropy, optimizer='Adam',
+    loaded_model.compile(loss=keras.losses.categorical_crossentropy, optimizer='Adam',
                   metrics=[keras.metrics.categorical_accuracy])
     print("Loaded model from disk")
     return  loaded_model
