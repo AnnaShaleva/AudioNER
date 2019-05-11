@@ -31,12 +31,13 @@ def load_data(dataset_name):
                 apply_bandpass_filter(tmp_path1, tmp_path2)
                 correct_volume(tmp_path2, tmp_path3)
                 x = audiofile_to_input_vector(audio_filename=tmp_path3, numcep=const.N_INPUT, numcontext=const.N_CONTEXT)
-                sr_value, x_value = scipy.io.wavfile.read(tmp_path3)
-                f, t, Sxx = signal.spectrogram(x_value, sr_value)
-                if (Sxx.shape[0] == 129) & (Sxx.shape[1] == 57) & (x.shape[0] == 20) & (x.shape[1] == 494):
+                #sr_value, x_value = scipy.io.wavfile.read(tmp_path3)
+                #f, t, Sxx = signal.spectrogram(x_value, sr_value)
+                #if (Sxx.shape[0] == 129) & (Sxx.shape[1] == 57) & (x.shape[0] == 20) & (x.shape[1] == 494):
+                if (x.shape[0] == 20) & (x.shape[1] == 494):
                     y1 = category_label
                     y2 = subcategory_label
-                    data.append((x, Sxx, y1, y2))
+                    data.append((x, y1, y2))
                 else:
                     print(audio)
                     print(x.shape)
@@ -48,9 +49,9 @@ def load_data(dataset_name):
     np.random.shuffle(data)
     reshaped_data = [list(a) for a in zip(*data)]
     X = reshaped_data[0]
-    X_spectrogram = reshaped_data[1]
-    Y1 = reshaped_data[2]
-    Y2 = reshaped_data[3]
+    #X_spectrogram = reshaped_data[1]
+    Y1 = reshaped_data[1]
+    Y2 = reshaped_data[2]
     dataset_path = const.DATA_PATH + dataset_name + '/data_csv/'
     if not os.path.isdir(dataset_path):
         os.mkdir(dataset_path)
@@ -62,13 +63,13 @@ def load_data(dataset_name):
         df.to_csv(dataset_path + str(i) + '.csv', header=None, index=None)
         i += 1
 
-    i = 0
-    for element in X_spectrogram:
-        df = pd.DataFrame(element)
-        df.to_csv(dataset_path + str(i) + '_spectrogram.csv', header=None, index=None)
-        i += 1
+    #i = 0
+    #for element in X_spectrogram:
+    #    df = pd.DataFrame(element)
+    #    df.to_csv(dataset_path + str(i) + '_spectrogram.csv', header=None, index=None)
+    #    i += 1
 
-    return X, X_spectrogram, Y1, Y2
+    return X, Y1, Y2
 
 
 def get_test_and_train_data(dataset_name, train_part):
