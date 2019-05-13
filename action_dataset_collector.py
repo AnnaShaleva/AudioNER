@@ -33,3 +33,15 @@ if __name__=="__main__":
              'youtube_test']
     for name in names:
         get_audio_categories(name)
+    names = []
+    for i in range(1, 13):
+        names.append('heads_and_tails_' + str(i))
+    names.append('audiobooks_dataset')
+    names.append('ht_old_dataset')
+    names.append('stories_dataset')
+    names.append('interviews_dataset')
+    names.append('svoim_hodom_dataset')
+    names.append('dud_dataset')
+
+    for name in names:
+        get_audio_categories(name)
