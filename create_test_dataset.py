@@ -28,6 +28,9 @@ if __name__=='__main__':
     './data/youtube_test/categories_samples/',
     './data/audiobooks_dataset/categories_samples/',
     './data/ht_old_dataset/categories_samples/',
-    './data/stories_dataset/categories_samples/']
+    './data/stories_dataset/categories_samples/',
+    './data/interviews_dataset/categories_samples/',
+    './data/svoim_hodom_dataset/categories_samples/',
+    './data/dud_dataset/categories_samples/']
     for name in names:
         get_samples_from_path(name, dataset_name)
