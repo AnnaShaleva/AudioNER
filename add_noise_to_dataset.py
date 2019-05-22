@@ -47,7 +47,7 @@ def add_noise_to_audio(path, name):
     
     sr_value, x_value = scipy.io.wavfile.read(source_sample_path)
     #target_snr_low = 2
-    target_snr_large = 10
+    target_snr_large = 2
     sig_avg_x = np.mean(abs(x_value))
     #noise_avg_small = sig_avg_x * target_snr_low
     noise_avg_large = sig_avg_x * target_snr_large
@@ -61,6 +61,7 @@ def add_noise_to_audio(path, name):
 
     dest_sample_path = path + os.path.splitext(name)[0] + '_large_noised.wav'
     scipy.io.wavfile.write(dest_sample_path, sr_value, z_value)
+    os.remove(source_sample_path)
 
 
 
@@ -71,8 +72,8 @@ if __name__=='__main__':
         category_source_path = dataset_path + category_folder + '/'
         for subcat_folder in os.listdir(category_source_path):
             subcat_source_path = category_source_path + subcat_folder + '/'
-            for sample in os.listdir(subcat_source_path):
-                speed_up_audio(subcat_source_path, sample)
+            #for sample in os.listdir(subcat_source_path):
+            #    speed_up_audio(subcat_source_path, sample)
             for sample in os.listdir(subcat_source_path):
                 add_noise_to_audio(subcat_source_path, sample)
 
