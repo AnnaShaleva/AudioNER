@@ -17,3 +17,5 @@ The repository is organised in the following way:
 | [interpreter.py](https://github.com/AnnaShaleva/AudioNER/blob/master/interpreter.py) | Module-interpreter reads relative coordinates from file and plot the trajectory of a point. | `Python 3.6`, `matplotlib` |
 
 Also at the root directory of the repo you can fined utils for data pre-processing and handling.
+ ## Models comparison
+ ![alt text](https://github.com/AnnaShaleva/AudioNER/blob/master/models_comparison.PNG)
